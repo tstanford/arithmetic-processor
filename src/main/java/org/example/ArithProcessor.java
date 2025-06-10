@@ -1,16 +1,15 @@
 package org.example;
 
 public class ArithProcessor {
-    public int calculate(String s) {
+    public float calculate(String s) {
         StringBuilder operatorBuffer = new StringBuilder();
         StringBuilder numericBuffer = new StringBuilder();
-        Integer register1 = null;
-        Integer register2 = null;
+        Float register1 = null;
+        Float register2 = null;
         boolean wasPreviousADigit = false;
 
-        for(int i=0; i<s.length(); i++) {
-            char currentChar = s.charAt(i);
-            boolean isADigit = Character.isDigit(currentChar);
+        for(char currentChar : s.toCharArray()) {
+            boolean isADigit = containsNumericChars(currentChar);
             
             if (isADigit) {
                 if(!wasPreviousADigit) {
@@ -20,9 +19,9 @@ public class ArithProcessor {
             } else {
                 if(wasPreviousADigit) {
                     if(register1 == null) {
-                        register1 = Integer.parseInt(numericBuffer.toString());
+                        register1 = Float.parseFloat(numericBuffer.toString());
                     } else {
-                        register2 = Integer.parseInt(numericBuffer.toString());
+                        register2 = Float.parseFloat(numericBuffer.toString());
                         register1 = execute(register1, register2, operatorBuffer.toString());
                     }
                     operatorBuffer.setLength(0);
@@ -31,13 +30,17 @@ public class ArithProcessor {
             }
             wasPreviousADigit = isADigit;
         }
-        register2 = Integer.parseInt(numericBuffer.toString());
+        register2 = Float.parseFloat(numericBuffer.toString());
         register1 = execute(register1, register2, operatorBuffer.toString());
         
         return register1;        
     }
 
-    private Integer execute(Integer register1, Integer register2, String operator) {
+    private static boolean containsNumericChars(char currentChar) {
+        return Character.isDigit(currentChar) || currentChar == '.';
+    }
+
+    private Float execute(Float register1, Float register2, String operator) {
         return switch(operator) {
             case "plus" -> register1+register2;
             case "minus" -> register1-register2;
